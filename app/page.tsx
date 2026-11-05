@@ -10,6 +10,9 @@ import LiveMatchScorecard from "./components/LiveMatchScorecard";
 import AiOverAnalysis from "./components/AiOverAnalysis";
 import AskWhatIf from "./components/AskWhatIf";
 import MatchWinningProbability from "./components/MatchWinningProbability";
+import MatchFlow from "./components/MatchFlow";
+import KeyPlayers from "./components/KeyPlayers";
+import MatchStats from "./components/MatchStats";
 
 export default function Home() {
   const [activeTab, setActiveTab] =
@@ -21,13 +24,13 @@ export default function Home() {
         return <AiOverAnalysis />;
 
       case "match-flow":
-        return <div>Match Flow</div>;
+        return <MatchFlow />;
 
       case "key-players":
-        return <div>Key Players</div>;
+        return <KeyPlayers />;
 
       case "stats":
-        return <div>Match Stats</div>;
+        return <MatchStats />;
 
       default:
         return null;
