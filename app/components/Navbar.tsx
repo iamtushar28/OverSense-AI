@@ -126,7 +126,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
                             size={17}
                             className={isFetching ? "animate-spin" : ""}
                         />
-                        <span>{isFetching ? "Refreshing..." : "Refresh"}</span>
+                        <span className="hidden md:block">{isFetching ? "Refreshing..." : "Refresh"}</span>
                     </button>
 
                     {/* Profile */}
