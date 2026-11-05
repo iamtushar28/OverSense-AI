@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
-import ReduxProvider from "./ReduxProvider";
+import Providers from "./providers";
 
 function ReduxFallback() {
     return (
@@ -25,9 +25,9 @@ export default function ReduxProviderClient({
 }) {
     return (
         <Suspense fallback={<ReduxFallback />}>
-            <ReduxProvider>
+            <Providers>
                 {children}
-            </ReduxProvider>
+            </Providers>
         </Suspense>
     );
 }

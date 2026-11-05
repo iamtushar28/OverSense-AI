@@ -149,11 +149,7 @@ export default function Home() {
         <aside className="flex min-w-0 flex-col gap-5">
 
           {/* Ask What If */}
-          <AskWhatIf
-            onAsk={(question) => {
-              console.log("What If Question:", question);
-            }}
-          />
+          <AskWhatIf />
 
           {/* Match Winning Probability */}
           <MatchWinningProbability

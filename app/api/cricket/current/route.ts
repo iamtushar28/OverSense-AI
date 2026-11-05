@@ -1,78 +1,75 @@
 import { NextResponse } from "next/server";
 
+const API_KEY = process.env.CRICAPI_KEY;
+const BASE_URL = process.env.CRICAPI_BASE_URL ?? "https://api.cricapi.com/v1";
+
 export async function GET() {
+  if (!API_KEY) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: "CRICAPI_KEY is not configured.",
+        data: [],
+        dataType: "none",
+      },
+      { status: 500 },
+    );
+  }
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
+
   try {
-    const apiKey = process.env.CRICAPI_KEY;
-    const baseUrl =
-      process.env.CRICAPI_BASE_URL || "https://api.cricapi.com/v1";
-
-    if (!apiKey) {
-      return NextResponse.json(
-        { success: false, message: "CricAPI key is missing." },
-        { status: 500 },
-      );
-    }
-
     const response = await fetch(
-      `${baseUrl}/currentMatches?apikey=${apiKey}&offset=0`,
-      { cache: "no-store" },
+      `${BASE_URL}/currentMatches?apikey=${encodeURIComponent(API_KEY)}&offset=0`,
+      {
+        cache: "no-store",
+        signal: controller.signal,
+      },
     );
 
     if (!response.ok) {
-      throw new Error(`CricAPI returned ${response.status}`);
+      throw new Error(`CricAPI request failed with status ${response.status}.`);
     }
 
     const result = await response.json();
 
     if (result.status !== "success") {
-      throw new Error(result.reason || "Unable to fetch matches.");
+      throw new Error(
+        result.reason || "CricAPI returned an unsuccessful response.",
+      );
     }
 
-    const matches = result.data || [];
+    const matches = result.data ?? [];
 
-    const isLive = (match: {
-      status?: string;
-      matchStarted?: boolean;
-      matchEnded?: boolean;
-    }) => {
-      const status = match.status?.toLowerCase() || "";
+    const liveMatches = matches.filter(
+      (match: {
+        matchStarted?: boolean;
+        matchEnded?: boolean;
+        matchType?: string;
+      }) => match.matchStarted && !match.matchEnded,
+    );
 
-      return (
-        match.matchStarted === true &&
-        match.matchEnded !== true &&
-        !status.includes("won") &&
-        !status.includes("draw") &&
-        !status.includes("abandoned") &&
-        !status.includes("cancelled")
-      );
-    };
-
-    const liveMatches = matches.filter(isLive);
-
-    // First priority: live ODI
-    const liveOdiMatches = liveMatches.filter(
+    const liveOdi = liveMatches.filter(
       (match: { matchType?: string }) =>
         match.matchType?.toLowerCase() === "odi",
     );
 
-    // Second priority: any other live match
-    const fallbackLiveMatches = liveMatches;
+    const selectedMatches = liveOdi.length
+      ? liveOdi
+      : liveMatches.length
+        ? liveMatches
+        : matches.length
+          ? matches
+          : [];
 
-    // Third priority: any available match for testing
-    const fallbackMatches = matches;
-
-    let selectedMatches = liveOdiMatches;
-    let dataType: "live-odi" | "live-other" | "test" | "none" = "live-odi";
-
-    if (selectedMatches.length === 0 && fallbackLiveMatches.length > 0) {
-      selectedMatches = fallbackLiveMatches;
-      dataType = "live-other";
-    }
-
-    if (selectedMatches.length === 0 && fallbackMatches.length > 0) {
-      selectedMatches = fallbackMatches;
-      dataType = "test";
-    }
+    const dataType = liveOdi.length
+      ? "live-odi"
+      : liveMatches.length
+        ? "live-other"
+        : matches.length
+          ? "test"
+          : "none";
 
     return NextResponse.json({
       success: true,
@@ -80,17 +77,25 @@ export async function GET() {
       dataType,
     });
   } catch (error) {
-    console.error("Current cricket matches error:", error);
+    const message =
+      error instanceof Error
+        ? error.name === "AbortError"
+          ? "CricAPI request timed out. Please try again."
+          : error.message
+        : "Unable to fetch cricket matches.";
+
+    console.error("CricAPI error:", error);
 
     return NextResponse.json(
       {
         success: false,
+        error: message,
         data: [],
         dataType: "none",
-        message:
-          error instanceof Error ? error.message : "Unable to fetch matches.",
       },
-      { status: 500 },
+      { status: 502 },
     );
+  } finally {
+    clearTimeout(timeout);
   }
 }

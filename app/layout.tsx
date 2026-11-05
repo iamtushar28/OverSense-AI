@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import DashboardLayout from "./components/DashboardLayout";
-import ReduxProviderClient from "@/lib/redux/ReduxProvider";
+import ReduxProviderClient from "@/lib/redux/providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
