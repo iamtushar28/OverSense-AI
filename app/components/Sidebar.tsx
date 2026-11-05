@@ -27,16 +27,6 @@ const navItems = [
         href: "/insights",
         icon: FiBarChart2,
     },
-    {
-        name: "Past Matches",
-        href: "/matches",
-        icon: FiClock,
-    },
-    {
-        name: "How it Works",
-        href: "/how-it-works",
-        icon: FiInfo,
-    },
 ];
 
 export default function Sidebar() {
@@ -63,8 +53,8 @@ export default function Sidebar() {
                             key={item.name}
                             href={item.href}
                             className={`flex h-[52px] items-center gap-5 rounded-xl px-[18px] transition-all duration-200 ${isActive
-                                    ? "bg-[#f0eaff] text-[#5420ed]"
-                                    : "text-[#171a35] hover:bg-[#f7f5ff] hover:text-[#5420ed]"
+                                ? "bg-[#f0eaff] text-[#5420ed]"
+                                : "text-[#171a35] hover:bg-[#f7f5ff] hover:text-[#5420ed]"
                                 }`}
                         >
                             <Icon

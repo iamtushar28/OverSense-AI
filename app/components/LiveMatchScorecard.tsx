@@ -17,8 +17,8 @@ type LiveMatchScorecardProps = {
 };
 
 export default function LiveMatchScorecard({
-    battingTeam = { name: "IND", flag: "🇮🇳", status: "Batting" },
-    bowlingTeam = { name: "AUS", flag: "🇦🇺" },
+    battingTeam = { name: "IND", flag: "in", status: "Batting" },
+    bowlingTeam = { name: "AUS", flag: "au" },
     score = "145/4",
     overs = "15.0",
     isLive = true,
@@ -45,9 +45,11 @@ export default function LiveMatchScorecard({
 
                 {/* Batting Team */}
                 <div className="flex min-w-0 items-center justify-start gap-1.5 sm:gap-3">
-                    <span className="shrink-0 text-[25px] leading-none sm:text-[35px]">
-                        {battingTeam.flag}
-                    </span>
+                    <img
+                        src={`https://flagcdn.com/w80/${battingTeam.flag}.png`}
+                        alt={`${battingTeam.name} flag`}
+                        className="h-6 w-8 shrink-0 rounded-sm object-cover sm:h-8 sm:w-10"
+                    />
 
                     <div className="flex min-w-0 flex-col items-start gap-1">
                         <span className="text-[15px] font-extrabold leading-none text-[#10143b] sm:text-[22px]">
@@ -78,10 +80,11 @@ export default function LiveMatchScorecard({
                     <span className="truncate text-[15px] font-extrabold leading-none text-[#10143b] sm:text-[22px]">
                         {bowlingTeam.name}
                     </span>
-
-                    <span className="shrink-0 text-[25px] leading-none sm:text-[35px]">
-                        {bowlingTeam.flag}
-                    </span>
+                    <img
+                        src={`https://flagcdn.com/w80/${bowlingTeam.flag}.png`}
+                        alt={`${bowlingTeam.name} flag`}
+                        className="h-6 w-8 shrink-0 rounded-sm object-cover sm:h-8 sm:w-10"
+                    />
                 </div>
             </div>
 

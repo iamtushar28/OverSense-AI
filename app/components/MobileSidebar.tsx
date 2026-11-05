@@ -21,8 +21,6 @@ const navItems = [
     { name: "Live Match", href: "/", icon: FiHome },
     { name: "What-If Simulator", href: "/what-if", icon: FiZap },
     { name: "Match Insights", href: "/insights", icon: FiBarChart2 },
-    { name: "Past Matches", href: "/matches", icon: FiClock },
-    { name: "How it Works", href: "/how-it-works", icon: FiInfo },
 ];
 
 export default function MobileSidebar({
@@ -37,16 +35,16 @@ export default function MobileSidebar({
             <div
                 onClick={onClose}
                 className={`fixed inset-0 z-40 bg-[#10143b]/40 transition-opacity duration-300 lg:hidden ${isOpen
-                        ? "visible opacity-100"
-                        : "invisible opacity-0"
+                    ? "visible opacity-100"
+                    : "invisible opacity-0"
                     }`}
             />
 
             {/* Sidebar Drawer */}
             <aside
                 className={`fixed left-0 top-0 z-50 flex h-dvh w-[280px] max-w-[85vw] flex-col border-r border-[#e8e9f3] bg-white px-[17px] py-5 shadow-xl transition-transform duration-300 ease-in-out lg:hidden ${isOpen
-                        ? "translate-x-0"
-                        : "-translate-x-full"
+                    ? "translate-x-0"
+                    : "-translate-x-full"
                     }`}
             >
                 {/* Logo Header */}
@@ -77,8 +75,8 @@ export default function MobileSidebar({
                                 href={item.href}
                                 onClick={onClose}
                                 className={`flex h-[52px] items-center gap-5 rounded-xl px-[18px] transition-all duration-200 ${isActive
-                                        ? "bg-[#f0eaff] text-[#5420ed]"
-                                        : "text-[#171a35] hover:bg-[#f7f5ff] hover:text-[#5420ed]"
+                                    ? "bg-[#f0eaff] text-[#5420ed]"
+                                    : "text-[#171a35] hover:bg-[#f7f5ff] hover:text-[#5420ed]"
                                     }`}
                             >
                                 <Icon size={21} strokeWidth={2} />
