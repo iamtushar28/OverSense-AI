@@ -56,9 +56,9 @@ export default function MatchAnalysisTabs({
                         key={tab.id}
                         type="button"
                         onClick={() => onTabChange(tab.id)}
-                        className={`flex h-[46px] shrink-0 items-center justify-center gap-2.5 rounded-lg px-5 text-[14px] font-semibold transition-all duration-200 ${isActive
-                                ? "bg-[#5420ed] text-white shadow-[0_3px_8px_rgba(84,32,237,0.2)]"
-                                : "text-[#535a78] hover:bg-[#f3f0ff] hover:text-[#5420ed]"
+                        className={`flex h-[46px] shrink-0 items-center justify-center gap-2.5 rounded-lg px-5 text-[14px] font-semibold transition-all duration-200 cursor-pointer ${isActive
+                            ? "bg-[#5420ed] text-white shadow-[0_3px_8px_rgba(84,32,237,0.2)]"
+                            : "text-[#535a78] hover:bg-[#f3f0ff] hover:text-[#5420ed]"
                             }`}
                     >
                         <Icon size={18} strokeWidth={2} />

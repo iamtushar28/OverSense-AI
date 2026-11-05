@@ -1,37 +1,67 @@
 "use client";
 
-import { useState } from "react";
 import {
     FiZap,
-    FiTarget,
     FiSend,
     FiArrowRight,
 } from "react-icons/fi";
+import { useRouter } from "next/navigation";
 
-type AskWhatIfProps = {
-    onAsk?: (question: string) => void;
-};
+import { useGetCurrentMatchesQuery } from "@/lib/redux/services/cricketApi";
+import { useState } from "react";
 
-const suggestions = [
-    "What if Virat scores 20 in the next over?",
-    "What if India scores 15 runs in the next over?",
-    "What if Australia takes 2 wickets in the next 2 overs?",
-];
+function getMatchTeams(match?: {
+    teams?: string[];
+    score?: {
+        inning?: string;
+    }[];
+}) {
+    const teams = match?.teams ?? [];
+    const latestInning = match?.score?.[match.score.length - 1];
+    const inningName = latestInning?.inning?.toLowerCase() ?? "";
 
-export default function AskWhatIf({ onAsk }: AskWhatIfProps) {
+    const battingTeam =
+        teams.find((team) =>
+            inningName.includes(team.toLowerCase())
+        ) ??
+        teams[0] ??
+        "Batting team";
+
+    const bowlingTeam =
+        teams.find((team) => team !== battingTeam) ??
+        "Bowling team";
+
+    return { battingTeam, bowlingTeam };
+}
+
+export default function AskWhatIf() {
+    const router = useRouter();
     const [question, setQuestion] = useState("");
+
+    const { data, isLoading } = useGetCurrentMatchesQuery();
+
+    const match = data?.matches?.[0];
+
+    const { battingTeam, bowlingTeam } = getMatchTeams(match);
+
+    const suggestions = [
+        `What if ${battingTeam} scores 15 runs in the next over?`,
+        `What if ${battingTeam} loses 2 wickets in the next 2 overs?`,
+        `What if ${bowlingTeam} takes a wicket in the next over?`,
+    ];
 
     const handleAsk = (value: string) => {
         const trimmed = value.trim();
+
         if (!trimmed) return;
 
-        onAsk?.(trimmed);
-        setQuestion("");
+        router.push(
+            `/what-if?scenario=${encodeURIComponent(trimmed)}`
+        );
     };
 
     return (
         <section className="w-full rounded-2xl border border-[#e1e5f5] bg-white p-4 shadow-[0_2px_12px_rgba(35,45,100,0.035)]">
-
             {/* Header */}
             <div className="mb-4 flex items-start gap-3">
                 <FiZap
@@ -42,23 +72,31 @@ export default function AskWhatIf({ onAsk }: AskWhatIfProps) {
 
                 <div>
                     <h2 className="text-[19px] font-extrabold tracking-tight text-[#10143b]">
-                        Ask What-If ?
+                        Ask What-If?
                     </h2>
 
                     <p className="mt-1 text-[14px] leading-[22px] text-[#343957]">
-                        Explore hypothetical scenarios and see how they change the match.
+                        Explore hypothetical scenarios and see how
+                        they could change the match.
                     </p>
+
+                    {match && (
+                        <p className="mt-1 text-[11px] font-medium text-[#858ba3]">
+                            {battingTeam} batting · {bowlingTeam} bowling
+                        </p>
+                    )}
                 </div>
             </div>
 
             {/* Suggested Questions */}
             <div className="space-y-2">
-                {suggestions.map((item, index) => (
+                {suggestions.map((item) => (
                     <button
-                        key={index}
+                        key={item}
                         type="button"
                         onClick={() => handleAsk(item)}
-                        className="flex min-h-[64px] w-full items-center gap-3 rounded-xl border border-[#e1e5f5] bg-white px-4 py-2.5 text-left transition-all hover:border-[#c8b5ff] hover:bg-[#faf8ff]"
+                        disabled={isLoading}
+                        className="flex min-h-[64px] w-full items-center gap-3 rounded-xl border border-[#e1e5f5] bg-white px-4 py-2.5 text-left transition-all hover:border-[#c8b5ff] hover:bg-[#faf8ff] disabled:cursor-not-allowed disabled:opacity-60"
                     >
                         <span className="flex-1 text-[14px] font-medium leading-[21px] text-[#10143b]">
                             {item}
@@ -74,8 +112,8 @@ export default function AskWhatIf({ onAsk }: AskWhatIfProps) {
 
             {/* Custom Question Input */}
             <form
-                onSubmit={(e) => {
-                    e.preventDefault();
+                onSubmit={(event) => {
+                    event.preventDefault();
                     handleAsk(question);
                 }}
                 className="mt-5 flex items-center gap-2"
@@ -83,8 +121,11 @@ export default function AskWhatIf({ onAsk }: AskWhatIfProps) {
                 <input
                     type="text"
                     value={question}
-                    onChange={(e) => setQuestion(e.target.value)}
+                    onChange={(event) =>
+                        setQuestion(event.target.value)
+                    }
                     placeholder="Ask your own scenario..."
+                    maxLength={500}
                     className="h-[49px] min-w-0 flex-1 rounded-full border border-[#dce1ef] bg-white px-4 text-[13px] text-[#10143b] outline-none transition focus:border-[#9564f5] focus:ring-2 focus:ring-[#eee6ff]"
                 />
 
