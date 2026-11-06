@@ -81,7 +81,7 @@ export async function POST(request: Request) {
       : Math.max(0, currentScore.wickets - previousScore.wickets);
 
     const { output } = await generateText({
-      model: google("gemini-3-flash-preview"),
+      model: google("gemini-3.1-flash-lite"),
 
       output: Output.object({
         schema: AnalysisSchema,
