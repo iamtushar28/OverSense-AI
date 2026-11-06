@@ -117,7 +117,7 @@ Return a structured analysis. Make the headline concise and the explanations spe
 `;
 
     const { output } = await generateText({
-      model: google("gemini-3-flash-preview"),
+      model: google("gemini-3.1-flash-lite"),
       output: Output.object({
         schema: WhatIfOutputSchema,
       }),
